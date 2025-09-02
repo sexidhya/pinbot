@@ -4,8 +4,8 @@ from telethon.tl.functions.messages import UpdatePinnedMessageRequest
 
 
 # Credentials remain unchanged
-api_id = 123456  # replace
-api_hash = "your_api_hash"
+api_id = 2852262  # replace
+api_hash = "968e06560801f5f264fe33d700329ddd"
 bot_token = "8491683377:AAG7m6QtA17P3jH7CpLfor30cIzTwv2Q7oc"
 TARGET_GROUP = -1002888180583  # replace with your group id
 
