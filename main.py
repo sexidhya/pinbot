@@ -1,6 +1,8 @@
 from telethon import TelegramClient, events, Button
 from telethon.utils import get_display_name
 from telethon.tl.functions.messages import UpdatePinnedMessageRequest
+from telethon.errors import UserNotParticipantError
+from telethon.tl.functions.channels import GetParticipantRequest
 import time
 import speedtest
 
@@ -77,20 +79,7 @@ async def start(event):
         await event.respond(
             "❌ You must join the group first to use this bot.",
             buttons=[
-                [Button.url("📢 Join Group", "try:
-        await client(GetParticipantRequest(TARGET_GROUP, event.sender_id))
-    except UserNotParticipantError:
-        await event.respond(
-            "❌ You must join the group first to use this bot.",
-            buttons=[
-                [Button.url("📢 Join Group", "https://t.me/your_group_username")]
-            ]
-        )
-        return
-
-    # if user is a member → continue
-    user_data[event.sender_id] = {"step": 0, "answers": {}}
-    await ask_question(event.sender_id)")]
+                [Button.url("📢 Join Group", "https://t.me/+FQ3boB77n805N2Y1")]
             ]
         )
         return
