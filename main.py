@@ -1,8 +1,8 @@
 from telethon import TelegramClient, events, Button
 
-api_id = 123456  # replace
-api_hash = "your_api_hash"
-bot_token = "your_bot_token"
+api_id = 6  # replace
+api_hash = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
+bot_token = "8491683377:AAG7m6QtA17P3jH7CpLfor30cIzTwv2Q7oc"
 
 TARGET_GROUP = -4827424207  # replace with your group id
 
