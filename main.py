@@ -3,6 +3,7 @@ from telethon.utils import get_display_name
 from telethon.tl.functions.messages import UpdatePinnedMessageRequest
 from telethon.errors import UserNotParticipantError
 from telethon.tl.functions.channels import GetParticipantRequest
+from telethon.tl.types import ChannelParticipantBanned
 import time
 import speedtest
 
@@ -70,12 +71,25 @@ questions = [
                  [Button.inline("Gaming", b"gaming")]]}
 ]
 
+# ---------------- MEMBERSHIP CHECK ----------------
+async def is_member(user_id):
+    try:
+        participant = await client(GetParticipantRequest(TARGET_GROUP, user_id))
+        if isinstance(participant.participant, ChannelParticipantBanned):
+            return False
+        return True
+    except UserNotParticipantError:
+        return False
+    except Exception as e:
+        print(f"Membership check error: {e}")
+        return False
+
 # ---------------- START ----------------
 @client.on(events.NewMessage(pattern="/start"))
 async def start(event):
-    try:
-        await client(GetParticipantRequest(TARGET_GROUP, event.sender_id))
-    except UserNotParticipantError:
+    user_id = event.sender_id
+
+    if not await is_member(user_id):
         await event.respond(
             "❌ You must join the group first to use this bot.",
             buttons=[
@@ -85,8 +99,8 @@ async def start(event):
         return
 
     # if user is a member → continue
-    user_data[event.sender_id] = {"step": 0, "answers": {}}
-    await ask_question(event.sender_id)
+    user_data[user_id] = {"step": 0, "answers": {}}
+    await ask_question(user_id)
 
 async def ask_question(user_id):
     step = user_data[user_id]["step"]
