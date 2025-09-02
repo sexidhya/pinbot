@@ -1,5 +1,7 @@
 from telethon import TelegramClient, events, Button
 from telethon.utils import get_display_name
+from telethon.tl.functions.messages import UpdatePinnedMessageRequest
+
 
 # Credentials remain unchanged
 api_id = 123456  # replace
