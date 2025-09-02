@@ -88,7 +88,11 @@ async def finalize_post(user_id):
     )
 
     post = await client.send_message(TARGET_GROUP, msg)
-    await client.pin_message(TARGET_GROUP, post, notify=False)
+    await client(UpdatePinnedMessageRequest(
+        peer=TARGET_GROUP,
+        id=post.id,
+        silent=True
+    ))
     await client.send_message(user_id, "✅ Your advertisement has been posted and pinned!")
     del user_data[user_id]
 
