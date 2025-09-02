@@ -1,6 +1,6 @@
 from telethon import TelegramClient, events, Button
 
-api_id = 6  # replace
+api_id = "6" # replace
 api_hash = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
 bot_token = "8491683377:AAG7m6QtA17P3jH7CpLfor30cIzTwv2Q7oc"
 
