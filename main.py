@@ -21,7 +21,7 @@ post_history = {}  # {user_id: [timestamps]}
 
 # Limits
 MAX_POSTS = 7
-COOLDOWN = 30 * 60  # 30 minutes in seconds
+COOLDOWN = 60 * 60  # 30 minutes in seconds
 
 # ---------------- PING COMMAND ----------------
 @client.on(events.NewMessage(pattern="/ping"))
