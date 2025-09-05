@@ -3,7 +3,6 @@ from telethon.utils import get_display_name
 from telethon.tl.functions.messages import UpdatePinnedMessageRequest
 from telethon.errors import UserNotParticipantError
 from telethon.tl.functions.channels import GetParticipantRequest
-from telethon.tl.types import ChannelParticipantBanned
 import time
 import speedtest
 
@@ -12,6 +11,7 @@ api_id = 2852262  # replace
 api_hash = "968e06560801f5f264fe33d700329ddd"
 bot_token = "8491683377:AAG7m6QtA17P3jH7CpLfor30cIzTwv2Q7oc"
 TARGET_GROUP = -1002888180583  # replace with your group id
+GROUP_LINK = "https://t.me/+FQ3boB77n805N2Y1"  # replace with actual invite link
 
 client = TelegramClient('ad_bot', api_id, api_hash).start(bot_token=bot_token)
 
@@ -21,7 +21,7 @@ post_history = {}  # {user_id: [timestamps]}
 
 # Limits
 MAX_POSTS = 7
-COOLDOWN = 60 * 60  # 30 minutes in seconds
+COOLDOWN = 60 * 60  # 1 hour in seconds
 
 # ---------------- PING COMMAND ----------------
 @client.on(events.NewMessage(pattern="/ping"))
@@ -74,12 +74,10 @@ questions = [
 # ---------------- MEMBERSHIP CHECK ----------------
 async def is_member(user_id):
     try:
-        participant = await client(GetParticipantRequest(TARGET_GROUP, user_id))
-        if isinstance(participant.participant, ChannelParticipantBanned):
-            return False
-        return True
+        await client(GetParticipantRequest(TARGET_GROUP, user_id))
+        return True  # ✅ user is in group
     except UserNotParticipantError:
-        return False
+        return False  # ❌ user not in group
     except Exception as e:
         print(f"Membership check error: {e}")
         return False
@@ -93,7 +91,7 @@ async def start(event):
         await event.respond(
             "❌ You must join the group first to use this bot.",
             buttons=[
-                [Button.url("📢 Join Group", "https://t.me/+FQ3boB77n805N2Y1")]
+                [Button.url("📢 Join Group", GROUP_LINK)]
             ]
         )
         return
