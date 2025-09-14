@@ -202,38 +202,51 @@ async def callback_handler(event):
 # ---------------- TEXT INPUT HANDLER ----------------
 @client.on(events.NewMessage)
 async def handle_answers(event):
-    if event.is_private and event.sender_id in user_data:
-        step = user_data[event.sender_id]["step"]
+    if not event.is_private:
+        return
 
-        if step < len(questions) and "buttons" in questions[step]:
+    user_id = event.sender_id
+    if user_id not in user_data:
+        return
+
+    step = user_data[user_id]["step"]
+    if step >= len(questions):
+        return
+
+    q = questions[step]
+    key = q["key"]
+
+    # 🚫 If this step has buttons (type, chain, payment, source) block text input
+    if "buttons" in q and key not in ["amount", "rate"]:
+        await event.respond("❌ Please use the buttons above instead of typing.")
+        return
+
+    # ✅ Allow text input ONLY for amount & rate
+    value = event.raw_text.strip()
+
+    if key == "amount":
+        if not value.isdigit():
+            await event.respond("❌ Please enter numbers only for amount.")
+            return
+        amount = int(value)
+        if amount < 1 or amount > 10000:
+            await event.respond("❌ Amount must be between 1 and 10000 USDT.")
             return
 
-        if step < len(questions):
-            key = questions[step]["key"]
-            value = event.raw_text.strip()
+    if key == "rate":
+        try:
+            rate = float(value)
+        except ValueError:
+            await event.respond("❌ Please enter a valid number for rate.")
+            return
+        if rate < 83 or rate > 115:
+            await event.respond("❌ Rate must be between 83 and 115.")
+            return
 
-            if key == "amount":
-                if not value.isdigit():
-                    await event.respond("❌ Please enter numbers only for amount.")
-                    return
-                amount = int(value)
-                if amount < 1 or amount > 10000:
-                    await event.respond("❌ Amount must be between 1 and 10000 USDT.")
-                    return
-
-            if key == "rate":
-                try:
-                    rate = float(value)
-                except ValueError:
-                    await event.respond("❌ Please enter a valid number for rate.")
-                    return
-                if rate < 83 or rate > 115:
-                    await event.respond("❌ Rate must be between 83 and 115.")
-                    return
-
-            user_data[event.sender_id]["answers"][key] = value
-            user_data[event.sender_id]["step"] += 1
-            await ask_question(event.sender_id)
+    # ✅ Store valid text input and move to next step
+    user_data[user_id]["answers"][key] = value
+    user_data[user_id]["step"] += 1
+    await ask_question(user_id)
 
 # ---------------- FINAL POST ----------------
 async def finalize_post(user_id):
