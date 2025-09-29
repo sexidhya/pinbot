@@ -253,11 +253,6 @@ async def finalize_post(user_id):
     now = time.time()
     history = post_history.get(user_id, [])
 
-    if len(history) >= MAX_POSTS:
-        await client.send_message(user_id, "❌ You have reached the maximum of 7 posts.")
-        del user_data[user_id]
-        return
-
     if history and now - history[-1] < COOLDOWN:
         remaining = int((COOLDOWN - (now - history[-1])) / 60)
         await client.send_message(user_id, f"⏳ Please wait {remaining} minutes before posting again.")
@@ -292,7 +287,6 @@ async def finalize_post(user_id):
     await client.send_message(user_id, "✅ Your advertisement has been posted and pinned!")
 
     history.append(now)
-    post_history[user_id] = history[-MAX_POSTS:]
     del user_data[user_id]
 
 print("Bot is running...")
