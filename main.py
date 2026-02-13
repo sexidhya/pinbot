@@ -222,11 +222,11 @@ async def finalize_post(user_id):
         f"Chain: {data['chain']}\n"
         f"Payment: {data['payment']}\n"
         f"Source: {data['source']}\n"
-        f"Escrow\n\n"
+        f"Escrow via @Exanic\n"
         f"**DM: {dm_text}**"
     )
 
-    buttons = [[Button.url("💬 DM Poster", dm_link)]]
+    buttons = [[Button.url("💬Message Me", dm_link)]]
 
     post = await client.send_message(
         TARGET_GROUP,
