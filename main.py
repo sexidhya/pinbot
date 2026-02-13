@@ -24,7 +24,6 @@ user_data = {}
 post_history = {}
 
 # ---------------- LIMITS ----------------
-MAX_POSTS = 7
 COOLDOWN = 60 * 60  # 1 hour
 
 # ---------------- MEMBERSHIP CHECK ----------------
@@ -34,8 +33,7 @@ async def is_member(entity_id, user_id):
         return True
     except UserNotParticipantError:
         return False
-    except Exception as e:
-        print(e)
+    except Exception:
         return False
 
 async def check_membership(user_id):
@@ -79,28 +77,6 @@ async def check_and_proceed(user_id, event=None):
 async def recheck(event):
     await event.answer("Re-checking...")
     await check_and_proceed(event.sender_id, event)
-
-# ---------------- PING ----------------
-@client.on(events.NewMessage(pattern="/ping"))
-async def ping(event):
-    start = time.time()
-    msg = await event.respond("🏓 Pinging...")
-    latency = round((time.time() - start) * 1000, 2)
-
-    try:
-        st = speedtest.Speedtest()
-        st.get_best_server()
-        down = round(st.download() / 1_000_000, 2)
-        up = round(st.upload() / 1_000_000, 2)
-    except Exception:
-        down = up = "Error"
-
-    await msg.edit(
-        f"✅ Pong!\n"
-        f"⏱ {latency} ms\n"
-        f"📡 {down} Mbps\n"
-        f"📤 {up} Mbps"
-    )
 
 # ---------------- QUESTIONS ----------------
 questions = [
@@ -231,9 +207,12 @@ async def finalize_post(user_id):
     data = user_data[user_id]["answers"]
     entity = await client.get_entity(user_id)
 
+    # 🔹 PRESERVE dm_text
     if entity.username:
+        dm_text = f"@{entity.username}"
         dm_link = f"https://t.me/{entity.username}"
     else:
+        dm_text = f"[{get_display_name(entity)}](tg://user?id={user_id})"
         dm_link = f"tg://user?id={user_id}"
 
     msg = (
@@ -243,15 +222,17 @@ async def finalize_post(user_id):
         f"Chain: {data['chain']}\n"
         f"Payment: {data['payment']}\n"
         f"Source: {data['source']}\n"
-        f"Escrow"
+        f"Escrow\n\n"
+        f"**DM: {dm_text}**"
     )
 
-    buttons = [[Button.url("Message Me", dm_link)]]
+    buttons = [[Button.url("💬 DM Poster", dm_link)]]
 
     post = await client.send_message(
         TARGET_GROUP,
         msg,
-        buttons=buttons
+        buttons=buttons,
+        link_preview=False
     )
 
     await client(UpdatePinnedMessageRequest(
