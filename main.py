@@ -14,7 +14,7 @@ bot_token = "8491683377:AAG7m6QtA17P3jH7CpLfor30cIzTwv2Q7oc"
 # ---------------- GROUP & CHANNEL ----------------
 TARGET_GROUP = -1002888180583
 GROUP_LINK = "https://t.me/+FQ3boB77n805N2Y1"
-TARGET_CHANNEL = -1002577893818
+TARGET_CHANNEL = -1002184803172
 CHANNEL_LINK = "https://t.me/exanic"
 
 client = TelegramClient("ad_bot", api_id, api_hash).start(bot_token=bot_token)
